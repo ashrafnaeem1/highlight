@@ -1,4 +1,8 @@
-<img src="icons/highlighter.svg" width="64" height="64" alt="" align="absolute-middle"> Highlight
+<div align="center">
+  <img src="icons/highlighter.svg" width="200" alt="Highlight icon">
+  <h1>Highlight</h1>
+  <p><strong>Highlight, annotate, and manage text on any web page.</strong></p>
+</div>
 
 Highlight text on any web page with colors, notes, and tooltips. Manage your highlights from the toolbar popup. Your highlights stay on your device.
 
