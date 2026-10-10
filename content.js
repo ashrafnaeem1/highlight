@@ -1,8 +1,36 @@
+// ---- Tunable: keyboard shortcuts ----
+// ctrl: Ctrl on Windows and Linux, Cmd on macOS. Set shift or alt to true to require them.
+// key: the letter or key name, in lowercase, for example "k" or "j".
+const SHORTCUT_QUICK_HIGHLIGHT = {
+  ctrl: true,
+  shift: false,
+  alt: false,
+  key: 'k',
+}
+const SHORTCUT_ERASE = {
+  ctrl: true,
+  shift: true,
+  alt: false,
+  key: 'x',
+}
+const SHORTCUT_UNDO = {
+  ctrl: true,
+  shift: true,
+  alt: false,
+  key: 'z',
+}
+const SHORTCUT_REDO = {
+  ctrl: true,
+  shift: true,
+  alt: false,
+  key: 'y',
+}
+
 // ---- Data version ----
 // Version of the stored data this build writes. Data stored without a stamp is pre-0.0
 // legacy data. Each update that changes the stored format bumps this and adds a fix
 // in migrateEntries(); old data is repaired automatically on load and on import.
-const DATA_VERSION = '0.1.0'
+const DATA_VERSION = '0.1.1'
 
 // ---- Tunable: curve of the trim handles ----
 // 0 = square edge, 1 = full half-round (plano-convex). Values in between flatten the curve.
@@ -947,7 +975,45 @@ function render() {
 // ---------- Saving and loading ----------
 let lastSavedJson = null
 
+// ---------- Undo history ----------
+// Every saved change pushes the state before it. Undo restores the last one.
+const UNDO_LIMIT = 100
+const undoStack = []
+const redoStack = []
+let lastCommitted = null // JSON of the model as of the last save
+
+// Move one step through the history: take the state from `source` and keep the current one in `target`
+function stepHistory(source, target) {
+  if (!source.length) return false
+  target.push(lastCommitted)
+  lastCommitted = source.pop()
+  model = JSON.parse(lastCommitted)
+  hidePopup()
+  render()
+  persistModel()
+  return true
+}
+
+function undoLast() {
+  return stepHistory(undoStack, redoStack)
+}
+
+function redoLast() {
+  return stepHistory(redoStack, undoStack)
+}
+
 async function saveModel() {
+  const now = JSON.stringify(model)
+  if (lastCommitted !== null && now !== lastCommitted) {
+    undoStack.push(lastCommitted)
+    redoStack.length = 0
+    if (undoStack.length > UNDO_LIMIT) undoStack.shift()
+  }
+  lastCommitted = now
+  await persistModel()
+}
+
+async function persistModel() {
   const entries = model.map(
     ({ g, c, f, p, n, o, s, e, t, pre, suf }) => ({
       g,
@@ -1028,6 +1094,7 @@ async function loadModel() {
     ])
     const raw = data[STORAGE_KEY] || []
     model = migrateEntries(raw)
+    lastCommitted = JSON.stringify(model)
     // Write back repaired or older-format data with the current stamp
     if (raw.length && data.dataVersion !== DATA_VERSION)
       saveModel()
@@ -1609,6 +1676,17 @@ function mergeGroups(a, b) {
 }
 
 // ---------- Quick highlight: Ctrl+K highlights the selection with "default" ----------
+// True when a keyboard event matches one of the shortcut settings above
+function matchesShortcut(e, shortcut) {
+  const modifier = e.ctrlKey || e.metaKey
+  return (
+    modifier === shortcut.ctrl &&
+    e.shiftKey === shortcut.shift &&
+    e.altKey === shortcut.alt &&
+    e.key.toLowerCase() === shortcut.key
+  )
+}
+
 function quickHighlight() {
   const sel = window.getSelection()
   if (!sel || sel.isCollapsed) return false
@@ -1628,13 +1706,7 @@ function quickHighlight() {
 }
 
 document.addEventListener('keydown', (e) => {
-  if (
-    !(e.ctrlKey || e.metaKey) ||
-    e.altKey ||
-    e.shiftKey ||
-    e.key.toLowerCase() !== 'k'
-  )
-    return
+  if (!matchesShortcut(e, SHORTCUT_QUICK_HIGHLIGHT)) return
   const t = e.target
   if (
     t &&
@@ -1643,6 +1715,63 @@ document.addEventListener('keydown', (e) => {
   )
     return
   if (quickHighlight()) e.preventDefault()
+})
+
+// Ctrl+E: same as the trash button. Erases the active group, or else the selected text.
+function eraseHighlight() {
+  const text = pageText()
+  if (savedGroupId) {
+    model = model.filter((r) => r.g !== savedGroupId)
+  } else {
+    const sel = window.getSelection()
+    if (!sel || sel.isCollapsed) return false
+    const span = rangeToSpan(sel.getRangeAt(0))
+    if (!span) return false
+    relocateModel(text)
+    cutSpan(text, span[0], span[1])
+    regroupModel(text)
+  }
+  window.getSelection().removeAllRanges()
+  hidePopup()
+  render()
+  saveModel()
+  return true
+}
+
+document.addEventListener('keydown', (e) => {
+  if (!matchesShortcut(e, SHORTCUT_UNDO)) return
+  const t = e.target
+  if (
+    t &&
+    (t.isContentEditable ||
+      /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))
+  )
+    return
+  if (undoLast()) e.preventDefault()
+})
+
+document.addEventListener('keydown', (e) => {
+  if (!matchesShortcut(e, SHORTCUT_REDO)) return
+  const t = e.target
+  if (
+    t &&
+    (t.isContentEditable ||
+      /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))
+  )
+    return
+  if (redoLast()) e.preventDefault()
+})
+
+document.addEventListener('keydown', (e) => {
+  if (!matchesShortcut(e, SHORTCUT_ERASE)) return
+  const t = e.target
+  if (
+    t &&
+    (t.isContentEditable ||
+      /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))
+  )
+    return
+  if (eraseHighlight()) e.preventDefault()
 })
 
 // ---------- Resize handles: drag a group's edges like a video trim ----------
@@ -1855,6 +1984,11 @@ shadow.addEventListener('mouseout', (e) => {
   if (el && !el.contains(e.relatedTarget)) hideDataTip()
 })
 
+// Listen in the capture phase, before page scripts can stop the event (GitHub does)
+function listenCapture(type, handler) {
+  document.addEventListener(type, handler, true)
+}
+
 // ---------- Event handlers ----------
 // Keep the page selection alive while clicking the popup
 shadow.addEventListener('mousedown', (e) => {
@@ -1958,7 +2092,7 @@ shadow.addEventListener('click', async (e) => {
 })
 
 // Clicking an existing highlight opens the popup for its whole group
-document.addEventListener('click', (e) => {
+listenCapture('click', (e) => {
   if (host.contains(e.target)) return
   const selection = window.getSelection()
   if (selection && !selection.isCollapsed) return // user was selecting, not clicking
@@ -1971,14 +2105,14 @@ document.addEventListener('click', (e) => {
 })
 
 // Clicking anywhere outside the popup or a highlight closes the popup
-document.addEventListener('mousedown', (e) => {
+listenCapture('mousedown', (e) => {
   if (host.contains(e.target)) return
   if (e.target.closest && e.target.closest('mark[data-hl-id]'))
     return
   hidePopup()
 })
 
-document.addEventListener('mouseup', (e) => {
+listenCapture('mouseup', (e) => {
   if (host.contains(e.target)) return
   const selection = window.getSelection()
   if (
@@ -2123,6 +2257,12 @@ chrome.runtime.onMessage.addListener(
     if (msg.type === 'siteInfo') {
       sendResponse({ host: location.host })
     }
+    if (msg.type === 'undo') {
+      sendResponse({ ok: undoLast() })
+    }
+    if (msg.type === 'redo') {
+      sendResponse({ ok: redoLast() })
+    }
     if (msg.type === 'setNote') {
       setGroupNote(
         msg.id,
@@ -2155,9 +2295,7 @@ function renderSwatches() {
     b.className = 'swatch'
     b.dataset.index = i
     b.style.background = p.bg
-    b.dataset.tip = p.fixed
-      ? `${p.name} (Fixed Color, Not Editable)`
-      : p.name || 'Highlight Color ' + (i + 1)
+    b.dataset.tip = p.name || 'Highlight Color ' + (i + 1)
     box.appendChild(b)
   })
 }
@@ -2239,6 +2377,11 @@ chrome.storage.onChanged.addListener((changes, area) => {
     }
     if (JSON.stringify(incoming) !== lastSavedJson) {
       model = migrateEntries(incoming)
+      lastCommitted = JSON.stringify(model)
+      if (!changes[STORAGE_KEY].newValue) {
+        undoStack.length = 0
+        redoStack.length = 0
+      } // storage was cleared
       lastSavedJson = JSON.stringify(incoming)
       render()
     }

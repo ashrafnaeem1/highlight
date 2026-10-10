@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Ash Highlight",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Highlight and annotate selected text on any page.",
   "icons": {
     "16": "icons/highlighter-16.png",

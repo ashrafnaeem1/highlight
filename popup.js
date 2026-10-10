@@ -593,6 +593,48 @@ async function exportHighlights() {
   say('Export saved.')
 }
 
+// Redo the last undone change on the current page
+document
+  .getElementById('redoBtn')
+  ?.addEventListener('click', async () => {
+    const tab = await activeTab()
+    let res
+    try {
+      res = await chrome.tabs.sendMessage(tab.id, {
+        type: 'redo',
+      })
+    } catch (err) {
+      res = { ok: false }
+    }
+    if (res && res.ok) {
+      say('Redone.')
+      load()
+    } else {
+      say('Nothing to redo.')
+    }
+  })
+
+// Undo the last change on the current page
+document
+  .getElementById('undoBtn')
+  ?.addEventListener('click', async () => {
+    const tab = await activeTab()
+    let res
+    try {
+      res = await chrome.tabs.sendMessage(tab.id, {
+        type: 'undo',
+      })
+    } catch (err) {
+      res = { ok: false }
+    }
+    if (res && res.ok) {
+      say('Undone.')
+      load()
+    } else {
+      say('Nothing to undo.')
+    }
+  })
+
 document
   .getElementById('exportBtn')
   .addEventListener('click', async () => {
@@ -676,11 +718,11 @@ document
     : 'system'
   if (
     saved.theme !== themePref ||
-    saved.dataVersion !== '0.1.0'
+    saved.dataVersion !== '0.1.1'
   ) {
     chrome.storage.local.set({
       theme: themePref,
-      dataVersion: '0.1.0',
+      dataVersion: '0.1.1',
     })
   }
   applyTheme()

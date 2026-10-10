@@ -1,6 +1,6 @@
 :root {
   --btn-scale: 1.5;
-  --scope-scale: 0.9; /* size of the scope dropdown: 1 = original, lower = smaller */
+  --scope-scale: 0.8; /* size of the scope dropdown: 1 = original, lower = smaller */
 }
 
 .ico {
@@ -32,7 +32,7 @@ html[data-theme='dark'] {
 body {
   background: var(--bg);
   color: var(--fg);
-  width: 320px;
+  width: 380px;
   margin: 0;
   padding: 8px;
   font-family: sans-serif;
