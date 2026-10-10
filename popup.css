@@ -1,0 +1,557 @@
+:root {
+  --btn-scale: 1.5;
+  --scope-scale: 0.9; /* size of the scope dropdown: 1 = original, lower = smaller */
+}
+
+.ico {
+  display: inline-block;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  background: currentColor;
+  mask: var(--icon) center / contain no-repeat;
+  -webkit-mask: var(--icon) center / contain no-repeat;
+}
+
+:root {
+  --bg: #eff1f5;
+  --fg: #4c4f69;
+  --muted: #6c6f85;
+  --border: #bcc0cc;
+  --input-bg: #e6e9ef;
+  --hover: #ccd0da;
+}
+html[data-theme='dark'] {
+  --bg: #24273a;
+  --fg: #cad3f5;
+  --muted: #a5adcb;
+  --border: #494d64;
+  --input-bg: #1e2030;
+  --hover: #363a4f;
+}
+body {
+  background: var(--bg);
+  color: var(--fg);
+  width: 320px;
+  margin: 0;
+  padding: 8px;
+  font-family: sans-serif;
+  font-size: 13px;
+}
+.seg {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.seg button {
+  flex: 1;
+  padding: 4px 0;
+  border: none;
+  background: transparent;
+  color: var(--fg);
+  font-size: 12px;
+  cursor: pointer;
+}
+.seg button + button {
+  border-left: 1px solid var(--border);
+}
+.seg button.active {
+  background: var(--hover);
+  font-weight: bold;
+}
+#search {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  background: var(--input-bg);
+  color: var(--fg);
+  border-radius: 6px;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+#list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 380px;
+  overflow-y: auto;
+}
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 6px 8px;
+  margin-bottom: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.item:hover {
+  filter: brightness(0.95);
+  outline: 1px solid var(--muted);
+}
+.text {
+  flex: 1;
+  word-break: break-word;
+}
+.del {
+  flex: none;
+  border: none;
+  background: transparent;
+  padding: 2px;
+  cursor: pointer;
+  color: inherit;
+  line-height: 0;
+}
+.del img {
+  width: 16px;
+  height: 16px;
+}
+#status {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+.link {
+  border: none;
+  background: none;
+  color: var(--fg);
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  font-size: 12px;
+}
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-top: 10px;
+}
+.btn {
+  padding: calc(1px * var(--btn-scale))
+    calc(5px * var(--btn-scale));
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--fg);
+  font: inherit;
+  font-size: calc(8px * var(--btn-scale));
+  cursor: pointer;
+}
+.btn:hover {
+  background: var(--hover);
+}
+.btn {
+  display: flex;
+  align-items: center;
+  gap: calc(3px * var(--btn-scale));
+}
+.btn .ico {
+  width: calc(8px * var(--btn-scale));
+  height: calc(8px * var(--btn-scale));
+}
+#notice {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 6px 8px;
+  margin-bottom: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.body {
+  flex: 1;
+  min-width: 0;
+  line-height: 1.4;
+  word-break: break-word;
+}
+.more {
+  position: absolute;
+  left: 8px;
+  bottom: 4px;
+  display: inline-flex;
+  padding: 0 3px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  line-height: 0;
+  cursor: pointer;
+}
+.more:hover {
+  outline: 1px solid currentColor;
+}
+.more[hidden] {
+  display: none;
+}
+.more .ico {
+  width: 16px;
+  height: 16px;
+}
+.icon-btn {
+  border: none;
+  background: transparent;
+  padding: 2px;
+  cursor: pointer;
+  color: inherit;
+  line-height: 0;
+  border-radius: 4px;
+}
+.icon-btn:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+.side {
+  display: flex;
+  flex: none;
+}
+
+.ctx-menu {
+  position: fixed;
+  z-index: 10;
+  min-width: 96px;
+  padding: 4px;
+  background: var(--bg);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+.ctx-menu[hidden] {
+  display: none;
+}
+.ctx-item {
+  display: block;
+  width: 100%;
+  padding: 4px 10px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+.ctx-item:hover {
+  background: var(--hover);
+}
+.ctx-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.ctx-item .ico {
+  width: 14px;
+  height: 14px;
+}
+
+/* Every group reserves room below its text for the expand/collapse button */
+.item {
+  position: relative;
+  padding-bottom: 26px;
+}
+
+/* Left margin reserved in every group; the expand/collapse button sits in it,
+   vertically between line 2 and line 3 of the text. */
+.item {
+  padding: 6px 8px 6px 30px;
+}
+.more {
+  left: 6px;
+  bottom: auto;
+  top: calc(6px + 2.8em - 9px);
+  font-size: 13px;
+}
+
+/* Footer: palette on the left, Export/Import on the right */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 10px;
+}
+.palette {
+  display: flex;
+  gap: 4px;
+}
+.pal {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  cursor: pointer;
+}
+.btns {
+  display: flex;
+  gap: 4px;
+}
+
+/* Color picker, shown in place of the list */
+.picker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.picker[hidden] {
+  display: none;
+}
+.picker-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.picker-body {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+#wheel {
+  width: 140px;
+  height: 140px;
+  cursor: crosshair;
+  flex: none;
+}
+.sliders {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  min-width: 0;
+}
+.sliders label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.sliders input[type='range'] {
+  width: 70px;
+}
+.sliders input[type='number'] {
+  width: 46px;
+}
+.sliders input[type='text'] {
+  width: 74px;
+}
+
+/* Advanced section */
+.advanced {
+  margin-top: 8px;
+}
+.adv-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: none;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 2px 0;
+}
+.adv-toggle .ico {
+  width: 12px;
+  height: 12px;
+}
+.adv-panel {
+  margin-top: 6px;
+}
+.adv-panel[hidden] {
+  display: none;
+}
+.btn.danger {
+  border-color: #d93025;
+  color: #d93025;
+}
+.btn.danger:hover {
+  background: rgba(217, 48, 37, 0.12);
+}
+
+/* Previous (left) and new (right) color previews in the picker header */
+.edit-title {
+  margin-right: 8px;
+}
+.previews {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+.preview {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+/* Space between the picker's Reset and Done */
+.picker-head .btns-head {
+  display: flex;
+  gap: 8px;
+}
+
+/* Reset confirmation, centered over the popup */
+.modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 20;
+}
+.modal[hidden] {
+  display: none;
+}
+.modal-box {
+  width: 240px;
+  padding: 12px;
+  background: var(--bg);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+.modal-box p {
+  margin: 0 0 4px;
+  font-size: 13px;
+}
+.modal-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+.modal-btns .btn {
+  width: 100%;
+}
+
+.btn.ok {
+  border-color: #40a02b;
+  color: #40a02b;
+}
+.btn.ok:hover {
+  background: rgba(64, 160, 43, 0.12);
+}
+
+/* Hover tooltip for list items: read-only, or editable while Alt is held */
+.ptip {
+  position: fixed;
+  z-index: 30;
+  max-width: 260px;
+  padding: 4px 8px;
+  background: var(--bg);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  font-size: 12px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  pointer-events: none;
+}
+.ptip[hidden] {
+  display: none;
+}
+.ptip.interactive {
+  pointer-events: auto;
+  user-select: text;
+  cursor: text;
+  outline: 1px solid var(--border);
+}
+.ptip.interactive:focus {
+  outline: 2px solid var(--fg);
+}
+
+/* Catppuccin tooltip for data-tip elements (follows the theme) */
+.ctip {
+  position: fixed;
+  display: none;
+  max-width: 260px;
+  padding: 4px 8px;
+  background: var(--bg);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  font-size: 12px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  pointer-events: none;
+  z-index: 40;
+}
+.ctip.show {
+  display: block;
+}
+
+/* Scope dropdown: shows five entries at a time, then scrolls */
+.scope {
+  margin-bottom: 8px;
+}
+.scope-btn {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: calc(5px * var(--scope-scale))
+    calc(8px * var(--scope-scale));
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--input-bg);
+  color: var(--fg);
+  font: inherit;
+  font-size: calc(12px * var(--scope-scale));
+  cursor: pointer;
+}
+.scope-btn .ico {
+  width: calc(12px * var(--scope-scale));
+  height: calc(12px * var(--scope-scale));
+}
+.scope-list {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  max-height: calc(
+    (5 * 26px + 8px) * var(--scope-scale)
+  ); /* five entries, then scroll */
+  overflow-y: auto;
+}
+.scope-list[hidden] {
+  display: none;
+}
+.scope-item {
+  padding: calc(5px * var(--scope-scale))
+    calc(8px * var(--scope-scale));
+  line-height: calc(16px * var(--scope-scale));
+  border-radius: 4px;
+  font-size: calc(12px * var(--scope-scale));
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.scope-item:hover {
+  background: var(--hover);
+}
+.scope-item.active {
+  font-weight: bold;
+}
+.section {
+  list-style: none;
+  padding: calc(8px * var(--scope-scale)) 2px 2px;
+  font-size: calc(11px * var(--scope-scale));
+  font-weight: bold;
+  color: var(--muted);
+}
