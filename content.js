@@ -148,8 +148,9 @@ const ICONS = {
   plus: chrome.runtime.getURL('icons/plus.svg'),
 }
 
-shadow.innerHTML = `
-  <style>
+// Popup styles. Applied as a constructed stylesheet, because pages with a strict Content
+// Security Policy (GitHub) block inline <style> elements.
+const UI_CSS = `
     :host {
       all: initial;
       color-scheme: light;
@@ -379,7 +380,9 @@ shadow.innerHTML = `
       outline: 1px solid var(--tip-border);
     }
     .tip.interactive:focus { outline: 2px solid var(--tip-fg); }
-  </style>
+`
+
+shadow.innerHTML = `
   <div class="popup" id="popup">
     <div class="toast" id="toast"><span class="ico ok" style="--icon:url(${ICONS.check})"></span>Copied!</div>
     <div class="controls">
@@ -404,6 +407,17 @@ shadow.innerHTML = `
   <div class="handle right" id="hR" hidden><i></i><i></i></div>
   <div class="ctip" id="ctip"></div>
 `
+
+// Apply the styles. Constructed stylesheets are not blocked by page CSP; <style> is the fallback.
+if (shadow.adoptedStyleSheets !== undefined) {
+  const sheet = new CSSStyleSheet()
+  sheet.replaceSync(UI_CSS)
+  shadow.adoptedStyleSheets = [sheet]
+} else {
+  const styleEl = document.createElement('style')
+  styleEl.textContent = UI_CSS
+  shadow.appendChild(styleEl)
+}
 
 const popup = shadow.getElementById('popup')
 const DATA_TIP = shadow.getElementById('ctip')
