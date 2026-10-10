@@ -1,29 +1,43 @@
 {
   "manifest_version": 3,
   "name": "highlight",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Highlight and annotate selected text on any page.",
   "icons": {
-    "96": "icons/highlighter-96.png"
+    "16": "icons/highlighter-16.png",
+    "32": "icons/highlighter-32.png",
+    "48": "icons/highlighter-48.png",
+    "128": "icons/highlighter-128.png"
   },
-  "permissions": ["storage"],
+  "permissions": [
+    "storage"
+  ],
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"],
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ],
       "run_at": "document_idle"
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": ["icons/*.svg"],
-      "matches": ["<all_urls>"]
+      "resources": [
+        "icons/*.svg"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "96": "icons/highlighter-96.png"
+      "16": "icons/highlighter-16.png",
+      "32": "icons/highlighter-32.png"
     }
   }
 }
