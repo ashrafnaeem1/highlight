@@ -3,8 +3,7 @@ name: Release
 # Two ways to publish:
 #  1. Push a tag such as v0.0.7 (the tag must match the manifest version).
 #  2. Run "Release" manually from the Actions tab. It publishes the version in
-#     highlight/manifest.json, which is how the first release is made without
-#     creating a tag by hand.
+#     the extension's manifest.json, which is how the first release is made.
 on:
   push:
     tags:
@@ -14,6 +13,11 @@ on:
 permissions:
   contents: write
 
+env:
+  # Folder that holds manifest.json. "." means the repository root.
+  # Use "highlight" if the extension sits in a subfolder.
+  EXT_DIR: "."
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -21,13 +25,20 @@ jobs:
       - name: Check out the repository
         uses: actions/checkout@v4
 
+      - name: Check the extension folder
+        run: |
+          if [ ! -f "$EXT_DIR/manifest.json" ]; then
+            echo "::error::No manifest.json in '$EXT_DIR'. Set EXT_DIR in release.yml to the folder that contains it."
+            exit 1
+          fi
+
       - name: Work out the version and tag
         run: |
-          MANIFEST_VERSION="$(jq -r .version highlight/manifest.json)"
+          MANIFEST_VERSION="$(jq -r .version "$EXT_DIR/manifest.json")"
           if [ "$GITHUB_REF_TYPE" = "tag" ]; then
             TAG="$GITHUB_REF_NAME"
             if [ "${TAG#v}" != "$MANIFEST_VERSION" ]; then
-              echo "::error::Tag $TAG does not match manifest version $MANIFEST_VERSION. Update highlight/manifest.json first."
+              echo "::error::Tag $TAG does not match manifest version $MANIFEST_VERSION. Update manifest.json first."
               exit 1
             fi
           else
@@ -42,18 +53,22 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if gh release view "$TAG" > /dev/null 2>&1; then
-            echo "::error::Release $TAG already exists. Bump the version in highlight/manifest.json to publish again."
+            echo "::error::Release $TAG already exists. Bump the version in manifest.json to publish again."
             exit 1
           fi
 
       - name: Check the scripts are valid JavaScript
         run: |
-          node --check highlight/content.js
-          node --check highlight/popup.js
+          node --check "$EXT_DIR/content.js"
+          node --check "$EXT_DIR/popup.js"
 
       - name: Package the extension
         run: |
-          zip -r "highlight-${VERSION}.zip" highlight -x "*.DS_Store"
+          # Zip a folder named "highlight" that holds only the extension files
+          mkdir -p stage/highlight
+          rsync -a --exclude '.git' --exclude '.github' --exclude '.DS_Store' "$EXT_DIR"/ stage/highlight/
+          (cd stage && zip -r "../highlight-${VERSION}.zip" highlight)
+          ls -la "highlight-${VERSION}.zip"
 
       - name: Create the release
         env:
