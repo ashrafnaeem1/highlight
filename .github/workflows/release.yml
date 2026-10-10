@@ -7,7 +7,7 @@ name: Release
 on:
   push:
     tags:
-      - "v*"
+      - 'v*'
   workflow_dispatch:
 
 permissions:
@@ -15,7 +15,7 @@ permissions:
 
 env:
   # Folder that holds manifest.json. "." means the repository root.
-  EXT_DIR: "."
+  EXT_DIR: '.'
 
 jobs:
   release:
@@ -49,9 +49,9 @@ jobs:
 
       - name: Check the versions agree
         run: |
-          # The stored-data stamps must match the release version (see CLAUDE.md)
-          STAMP_CONTENT="$(grep -oE 'DATA_VERSION = "[^"]+"' "$EXT_DIR/content.js" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')"
-          STAMP_POPUP="$(grep -oE 'dataVersion: "[^"]+"' "$EXT_DIR/popup.js" | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')"
+          # Accepts single or double quotes, since the repository uses single quotes
+          STAMP_CONTENT="$(sed -nE "s/.*DATA_VERSION = ['\"]([^'\"]+)['\"].*/\1/p" "$EXT_DIR/content.js" | head -1)"
+          STAMP_POPUP="$(sed -nE "s/.*dataVersion: ['\"]([^'\"]+)['\"].*/\1/p" "$EXT_DIR/popup.js" | head -1)"
           echo "manifest=$VERSION content=$STAMP_CONTENT popup=$STAMP_POPUP"
           if [ "$STAMP_CONTENT" != "$VERSION" ] || [ "$STAMP_POPUP" != "$VERSION" ]; then
             echo "::error::DATA_VERSION in content.js or dataVersion in popup.js does not match $VERSION."
