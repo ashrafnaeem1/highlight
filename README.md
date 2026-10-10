@@ -1,16 +1,16 @@
 <div align="center">
-  <img src="icons/highlighter.svg" width="200" alt="Highlight icon">
-  <h1>Highlight</h1>
+  <img src="icons/highlighter.svg" width="200" alt="Ash Highlight icon">
+  <h1>Ash Highlight</h1>
   <p><strong>Highlight, annotate, and manage text on any web page.</strong></p>
 </div>
 
 Highlight text on any web page with colors, notes, and tooltips. Manage your highlights from the toolbar popup. Your highlights stay on your device.
 
-Version: 0.0.7
+Version: 0.1.0
 
 ## Install (Chrome, Edge, or other Chromium browsers)
 
-1. Download `highlight-0.0.7.zip` from the Releases page and unzip it. Keep the folder somewhere permanent, because the browser reads it from there.
+1. Download `highlight-0.1.0.zip` from the Releases page and unzip it. Keep the folder somewhere permanent, because the browser reads it from there.
 2. Open `chrome://extensions` (Edge: `edge://extensions`).
 3. Turn on **Developer mode**.
 4. Click **Load unpacked** and choose the unzipped `highlight` folder.

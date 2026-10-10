@@ -7,7 +7,7 @@ name: Release
 on:
   push:
     tags:
-      - "v*"
+      - 'v*'
   workflow_dispatch:
 
 permissions:
@@ -16,7 +16,7 @@ permissions:
 env:
   # Folder that holds manifest.json. "." means the repository root.
   # Use "highlight" if the extension sits in a subfolder.
-  EXT_DIR: "."
+  EXT_DIR: '.'
 
 jobs:
   release:
