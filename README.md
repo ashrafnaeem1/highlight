@@ -1,4 +1,4 @@
-# Highlight
+<img src="icons/highlighter.svg" width="64" height="64" alt="" align="absolute-middle"> Highlight
 
 Highlight text on any web page with colors, notes, and tooltips. Manage your highlights from the toolbar popup. Your highlights stay on your device.
 
@@ -29,7 +29,3 @@ Chrome deletes an extension's data when it is removed. Use **Export** in the too
 ## Privacy
 
 Highlights, notes, and settings are stored only in this browser. Nothing is sent to any server.
-
-## License
-
-MIT License, [See License](./LICENSE).
