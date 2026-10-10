@@ -56,6 +56,12 @@ Chrome deletes an extension's data when it is removed. Use **Export** in the too
 
 Highlights, notes, and settings are stored only in this browser. Nothing is sent to any server.
 
+## About this project
+
+It is mostly a personal-use project, but open sourced so others may also benefit. Development was AI-assisted to finish the project quickly. It isn't supposed to be professional or commercial. Nor is it supposed to show my skills.
+
+If you find any issues or bugs, feel free to open an issue in the Issues tab.
+
 ## License
 
 Ash Highlight is released under the MIT License. See [LICENSE](LICENSE) for the full text.
