@@ -10,7 +10,7 @@ Version: 0.1.1
 
 ## Install (Chrome, Edge, or other Chromium browsers)
 
-1. Download `highlight-0.1.1.zip` from the Releases page and unzip it. Keep the folder somewhere permanent, because the browser reads it from there.
+1. Download the latest zip file from the Releases page and unzip it. Keep the folder somewhere permanent, because the browser reads it from there.
 2. Open `chrome://extensions` (Edge: `edge://extensions`).
 3. Turn on **Developer mode**.
 4. Click **Load unpacked** and choose the unzipped `highlight` folder.
