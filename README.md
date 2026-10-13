@@ -45,7 +45,8 @@ Please don't post private information, such as passwords or personal highlights,
 
 - Select text to see the highlight popup. Choose a color to highlight.
 - Click a highlight to open its popup, add a note with `+`, or resize it with the blue handles.
-- Ctrl+K highlights the selection with the default color.
+- Ctrl+Shift+J highlights the selection with Color 1. Default: #BBD9B8
+- Ctrl+Shift+K highlights the selection with Color 2. Default: #A9DAF0
 - Ctrl+Shift+X erases the highlight you're on, or the highlight in your selection.
 - Ctrl+Shift+Z undoes the last change on the page, and Ctrl+Shift+Y redoes it.
 - The shortcuts can be changed in `content.js`, under "Tunable: keyboard shortcuts".
