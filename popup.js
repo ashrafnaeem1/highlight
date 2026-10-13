@@ -732,9 +732,9 @@ document
 // ---------- Palette and color picker ----------
 const DEFAULT_PALETTE = [
   { id: 'p2', name: 'Default', bg: '#BBD9B8', fg: null },
-  { id: 'p0', bg: '#CAD1F7', fg: null },
-  { id: 'p6', bg: '#FFFBD1', fg: null },
   { id: 'p3', bg: '#A9DAF0', fg: null },
+  { id: 'p6', bg: '#FFFBD1', fg: null },
+  { id: 'p0', bg: '#CAD1F7', fg: null },
   { id: 'p4', bg: '#F4C7AF', fg: null },
   {
     id: 'p5',

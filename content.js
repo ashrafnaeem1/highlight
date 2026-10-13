@@ -1,11 +1,35 @@
 // ---- Tunable: keyboard shortcuts ----
 // ctrl: Ctrl on Windows and Linux, Cmd on macOS. Set shift or alt to true to require them.
 // key: the letter or key name, in lowercase, for example "k" or "j".
+// slot: which palette color to use. 0 = first color, 1 = second, and so on.
 const SHORTCUT_QUICK_HIGHLIGHT = {
   ctrl: true,
-  shift: false,
+  shift: true,
+  alt: false,
+  key: 'j',
+  slot: 0,
+}
+const SHORTCUT_QUICK_HIGHLIGHT_2 = {
+  ctrl: true,
+  shift: true,
   alt: false,
   key: 'k',
+  slot: 1,
+}
+// Highlight with the current rotating color, then move the rotation: step -1 = left, +1 = right
+const SHORTCUT_QUICK_ROTATE_LEFT = {
+  ctrl: true,
+  shift: true,
+  alt: false,
+  key: 'h',
+  step: -1,
+}
+const SHORTCUT_QUICK_ROTATE_RIGHT = {
+  ctrl: true,
+  shift: true,
+  alt: false,
+  key: 'l',
+  step: 1,
 }
 const SHORTCUT_ERASE = {
   ctrl: true,
@@ -60,9 +84,9 @@ const COLORS = {
 // Palette: each entry is { bg, fg }. fg null = automatic text color.
 const DEFAULT_PALETTE = [
   { id: 'p2', name: 'Default', bg: '#BBD9B8', fg: null },
-  { id: 'p0', bg: '#CAD1F7', fg: null },
-  { id: 'p6', bg: '#FFFBD1', fg: null },
   { id: 'p3', bg: '#A9DAF0', fg: null },
+  { id: 'p6', bg: '#FFFBD1', fg: null },
+  { id: 'p0', bg: '#CAD1F7', fg: null },
   { id: 'p4', bg: '#F4C7AF', fg: null },
   {
     id: 'p5',
@@ -1701,7 +1725,20 @@ function matchesShortcut(e, shortcut) {
   )
 }
 
-function quickHighlight() {
+// Rotating color for the H and L shortcuts. Remembered across pages in storage.
+let quickSlot = 0
+
+// Highlight with the current rotating color, then rotate by `step` (wraps around the palette)
+function quickRotate(step) {
+  const n = palette.length
+  const used = ((quickSlot % n) + n) % n
+  if (!quickHighlight(used)) return false
+  quickSlot = (used + step + n) % n
+  chrome.storage.local.set({ quickSlot })
+  return true
+}
+
+function quickHighlight(slot) {
   const sel = window.getSelection()
   if (!sel || sel.isCollapsed) return false
   const span = rangeToSpan(sel.getRangeAt(0))
@@ -1710,7 +1747,13 @@ function quickHighlight() {
   const text = pageText()
   relocateModel(text)
   if (model.some((r) => r.e > a && r.s < b)) return false // same rule as "+"
-  applyToModel(text, a, b, palette[0], freshId())
+  applyToModel(
+    text,
+    a,
+    b,
+    palette[slot] || palette[0],
+    freshId(),
+  )
   regroupModel(text)
   sel.removeAllRanges()
   savedSpan = null
@@ -1728,7 +1771,47 @@ document.addEventListener('keydown', (e) => {
       /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))
   )
     return
-  if (quickHighlight()) e.preventDefault()
+  if (quickHighlight(SHORTCUT_QUICK_HIGHLIGHT.slot))
+    e.preventDefault()
+})
+
+document.addEventListener('keydown', (e) => {
+  if (!matchesShortcut(e, SHORTCUT_QUICK_ROTATE_LEFT)) return
+  const t = e.target
+  if (
+    t &&
+    (t.isContentEditable ||
+      /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))
+  )
+    return
+  if (quickRotate(SHORTCUT_QUICK_ROTATE_LEFT.step))
+    e.preventDefault()
+})
+
+document.addEventListener('keydown', (e) => {
+  if (!matchesShortcut(e, SHORTCUT_QUICK_ROTATE_RIGHT)) return
+  const t = e.target
+  if (
+    t &&
+    (t.isContentEditable ||
+      /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))
+  )
+    return
+  if (quickRotate(SHORTCUT_QUICK_ROTATE_RIGHT.step))
+    e.preventDefault()
+})
+
+document.addEventListener('keydown', (e) => {
+  if (!matchesShortcut(e, SHORTCUT_QUICK_HIGHLIGHT_2)) return
+  const t = e.target
+  if (
+    t &&
+    (t.isContentEditable ||
+      /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))
+  )
+    return
+  if (quickHighlight(SHORTCUT_QUICK_HIGHLIGHT_2.slot))
+    e.preventDefault()
 })
 
 // Ctrl+E: same as the trash button. Erases the active group, or else the selected text.
@@ -2328,6 +2411,9 @@ async function applyPendingScroll() {
 }
 
 // ---------- Start ----------
+chrome.storage.local.get('quickSlot').then((d) => {
+  if (Number.isInteger(d.quickSlot)) quickSlot = d.quickSlot
+})
 {
   const NS = 'http://www.w3.org/2000/svg'
   const svg = document.createElementNS(NS, 'svg')
