@@ -6,8 +6,6 @@
 
 Highlight text on any web page with colors, notes, and tooltips. Manage your highlights from the toolbar popup. Your highlights stay on your device.
 
-Version: 0.1.1
-
 ## Install (Chrome, Edge, or other Chromium browsers)
 
 1. Download the latest zip file from the Releases page and unzip it. Keep the folder somewhere permanent, because the browser reads it from there.
