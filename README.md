@@ -49,6 +49,11 @@ Please don't post private information, such as passwords or personal highlights,
 - Ctrl+Shift+K highlights the selection with Color 2. Default: #A9DAF0
 - Ctrl+Shift+X erases the highlight you're on, or the highlight in your selection.
 - Ctrl+Shift+Z undoes the last change on the page, and Ctrl+Shift+Y redoes it.
+
+NOTE: If you have other extensions installed then their keybindings may conflict with this extension.
+In that case you may need to edit `content.js` manually to use another keybinding. No Code custom 
+keybinding directly from action popup maybe added in future updates. 
+
 - The shortcuts can be changed in `content.js`, under "Tunable: keyboard shortcuts".
 - Click the toolbar icon to see, search, and manage all highlights.
 - The undo button in the toolbar popup reverses the last change on the current page.
